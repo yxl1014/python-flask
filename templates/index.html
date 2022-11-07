@@ -2,9 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>人机对话智能系统</title>
+    <style>
+        body {
+            background: url(../static/index_background4.jpg) no-repeat fixed;
+            background-size: cover;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .main {
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        #title{
+            width: 1000px;
+            height: 400px;
+        }
+        #tr{
+            float: left;
+            width: 0;
+            height: 0;
+            border-top: 170px solid rgba(2, 2, 2, 0.4);
+            border-right: 400px solid transparent;
+        }
+        #text{
+            float: left;
+            margin-bottom: -40px;
+            margin-left: 30px;
+            font-size: 30px;
+        }
+
+        .div_body {
+            width: 100%;
+            height: 100%;
+            margin-top: -230px;
+        }
+
+        .four_body{
+            margin:0 auto ;
+            width: 60%;
+            height: 600px;
+        }
+
+        .img_text_identify {
+            float: left;
+            border-top-left-radius: 25px;
+            width: 50%;
+            height: 300px;
+            line-height: 300px;
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            background-color: rgba(8, 33, 84, 0.89);
+        }
+
+        .speaking_assessment_subjective {
+            float: right;
+            border-top-right-radius: 25px;
+            width: 50%;
+            height: 300px;
+            line-height: 300px;
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            background-color: rgba(53, 138, 138, 0.89);
+        }
+
+        .voice_text_identify {
+            float: left;
+            border-bottom-left-radius: 25px;
+            width: 50%;
+            height: 300px;
+            line-height: 300px;
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            background-color: rgba(53, 138, 138, 0.89);
+        }
+
+        .speaking_assessment_objective {
+            float: right;
+            border-bottom-right-radius: 25px;
+            width: 50%;
+            height: 300px;
+            line-height: 300px;
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            background-color: rgba(8, 33, 84, 0.89);
+        }
+
+        .img_text_identify:hover, .speaking_assessment_subjective:hover, .voice_text_identify:hover, .speaking_assessment_objective:hover {
+            background-color: rgba(40, 39, 39, 0.87);
+            text-shadow: 0 0 10px blue,
+            0 0 20px blue,
+            0 0 40px blue,
+            0 0 80px blue;
+            box-shadow: 0 0 10px #babae1,
+            0 0 20px #babae1,
+            0 0 40px #babae1,
+            0 0 80px #babae1;
+            transition: all 0.3s;
+        }
+
+    </style>
 </head>
 <body>
-
+<div class="main">
+    <div id="title">
+    <div id="text">人机对话智能系统</div>
+    <div id="tr"></div>
+    </div>
+    <div class="div_body">
+        <div class="four_body">
+        <a href="/p2t" target="_blank">
+            <div class="img_text_identify">图片文字识别</div>
+        </a>
+        <a href="/flower" target="_blank">
+            <div class="speaking_assessment_subjective">花草图片识别</div>
+        </a>
+        <a href="/r2t" target="_blank">
+            <div class="voice_text_identify">语音文字识别</div>
+        </a>
+        <a href="/star" target="_blank">
+            <div class="speaking_assessment_objective">明星图片识别</div>
+        </a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

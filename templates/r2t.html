@@ -2,9 +2,222 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>语音文字识别</title>
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: url(../static/other.jpeg) no-repeat fixed;
+            background-size: cover;
+        }
+
+        .main {
+            margin: 0 auto;
+            width: 90%;
+            height: 1024px;
+            background-color: rgba(246, 241, 241, 0.87);
+        }
+
+        .title {
+            margin: 0 auto;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            background-color: #504c4c;
+            color: #faf7f7;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        #myform {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        #file_div {
+            position: relative;
+            display: block;
+            background: #494646;
+            width: 200px;
+            height: 50px;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            margin: 50px auto 0;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #fff;
+            text-align: center;
+            line-height: 50px;
+        }
+
+        #file_div input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        #file_div:hover {
+            cursor: pointer;
+            background: #282727;
+            border-color: #78C3F3;
+            text-shadow: 0 0 10px blue,
+            0 0 20px blue,
+            0 0 40px blue,
+            0 0 80px blue;
+            box-shadow: 0 0 10px #babae1,
+            0 0 20px #babae1,
+            0 0 40px #babae1,
+            0 0 80px #babae1;
+            transition: all 0.3s;
+
+        }
+
+        #button_div {
+            position: relative;
+            display: block;
+            background: #494646;
+            width: 100px;
+            height: 40px;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            margin: 50px auto 0px;
+            overflow: hidden;
+            color: #fff;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        #mybutton{
+            width: 100px;
+            height: 40px;
+            background: none;
+            color: white;
+            border: none;
+            outline: none;
+        }
+
+        #button_div:hover {
+            cursor: pointer;
+            background: #282727;
+            border-color: #78C3F3;
+            text-shadow: 0 0 10px blue,
+            0 0 20px blue,
+            0 0 40px blue,
+            0 0 80px blue;
+            box-shadow: 0 0 10px #babae1,
+            0 0 20px #babae1,
+            0 0 40px #babae1,
+            0 0 80px #babae1;
+            transition: all 0.3s;
+
+        }
+
+        #display {
+            width: 80%;
+            height: 500px;
+            margin: 50px auto 0;
+            padding: 0 30px 30px 30px;
+            border: 2px solid black;
+        }
+
+        #display_outcome_p {
+            font-size: 25px;
+        }
+
+        #display_outcome {
+            width: 100%;
+        }
+    </style>
+    <script>
+
+    </script>
 </head>
 <body>
+<div class="main">
+    <!--标题-->
+    <div class="title">语音文字识别</div>
 
+
+    <!--form表单，post-->
+    <form action="/radio2text" id="myform" method="post">
+        <!--div是为了给file做css美化-->
+        <div id="file_div">
+            <!--span是为了获取文件名-->
+            <span id="filename">
+                上传音频
+            </span>
+            <!--创建file-->
+            <input id="myfile" type="file" name="myfile" onchange="getFilename()">
+        </div>
+
+
+        <!--div是为了给button做css美化-->
+        <div id="button_div">
+            <!--创建button-->
+            <input id="mybutton" type="button" value="提交">
+        </div>
+    </form>
+
+
+    <!--底下的显示框-->
+    <div id="display">
+        <p id="display_outcome_p">识别结果：</p><br>
+        <!--显示框内显示内容的具体位置-->
+        <div id="display_outcome">
+        </div>
+    </div>
+</div>
 </body>
+<script type="text/javascript">
+    //获取文件名
+    function getFilename() {
+        var filename = document.getElementById("myfile").value;
+        if (filename === undefined || filename === "") {
+            document.getElementById("filename").innerHTML = "点击此处上传文件";
+        } else {
+            var fn = filename.substring(filename.lastIndexOf("\\") + 1);
+            document.getElementById("filename").innerHTML = fn; //将截取后的文件名填充到span中
+        }
+    }
+
+    var i=1;
+    $("#mybutton").click(function () {
+        if ($("#myfile").val() !== "") {
+            console.log($("#myfile").val());
+            var formData = new FormData($('#myform')[0]);
+            $.ajax({
+                type: "post",
+                url: "/radio2text",
+                cache: false,
+                async: true,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                data: formData,
+                success: function (res) {
+                    if(res['msg']==="该格式暂不支持访问"){
+                        document.getElementById("display_outcome").innerHTML +=res['msg']
+                    }else {
+                        document.getElementById("display_outcome").innerHTML +=
+                        '第'+i+'次结果：'+res['msg']+"<br>";
+                    i++;
+                    }
+
+                },
+                error: function (err) {
+                    document.getElementById("display_outcome").innerHTML = err;
+                }
+            });
+        }
+    })
+
+
+</script>
 </html>

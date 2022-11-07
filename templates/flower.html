@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>图片文字识别</title>
+    <title>花草图片识别</title>
     <script src="../static/jquery-3.5.1.min.js"></script>
     <style>
         * {
@@ -141,9 +141,9 @@
 <div class="main">
 
     <!--标题-->
-    <div class="title">图片文字识别</div>
+    <div class="title">花草图片识别</div>
     <!--form表单，post-->
-    <form action="/proto2text" id="myform" method="post">
+    <form action="/select_flower" id="myform" method="post">
         <!--div是为了给file做css美化-->
         <div id="file_div">
             <!--span是为了获取文件名-->
@@ -188,7 +188,7 @@
             var formData = new FormData($('#myform')[0]);
             $.ajax({
                 type: "post",
-                url: "/proto2text",
+                url: "/select_flower",
                 cache: false,
                 async: true,
                 processData: false,
@@ -197,7 +197,7 @@
                 data: formData,
                 success: function (res) {
                     document.getElementById("display_outcome").innerHTML +=
-                        '第'+i+'次结果：'+res['msg']+"<br>";
+                        '第'+i+'次结果：'+'花草名称：'+res['id']+"<br>"+'花草介绍：'+res['introduce']+"<br>";
                     i++;
                 },
                 error: function (err) {

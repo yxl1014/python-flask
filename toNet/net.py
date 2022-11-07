@@ -1,9 +1,9 @@
 import datetime, hashlib, hmac
 import requests  # Command to install: `pip install request`
-import json, sys, time
+import json
 from requests_toolbelt import MultipartEncoder
 
-AppKey = '31812ff08af611eb91b2bf61ee5e21b0'
+AppKey = '3a5fd86050b311eb824a27307f107a44'
 
 
 def r2t(filepath, ext):
@@ -34,7 +34,7 @@ def r2t(filepath, ext):
     })
     data = MultipartEncoder(  # 封装的请求数据
         fields={
-            "audio": (None, open(filepath, 'rb'), 'audio'),
+            "audio": (None, open(filepath, 'rb'), 'audio/' + ext),
             # form-data; name="audio"; filename="/D:/123/voiceprint.3.wav" 字段为audio,文件名的key是filename,类型是audio/mp3
             "metadata": (None, payload, "application/json; charset=utf8"),  # form-data; name="metadata"
         }, boundary="----WebKitFormBoundary7MA4YWxkTrZu0gW"
@@ -102,12 +102,8 @@ def your(filepath, text, ext):
     print("-------------------------------your-------------------------------------")
     print("测试文件绝对路径：" + filepath)
     url = 'https://gwgray.tvs.qq.com/ai/evaluate/speech/sentence-once'
-
-    headers = {
-        'Appkey': AppKey,
-        'Content-Type': 'multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-        'DSN': '28:37:13:05:4A:4C'
-    }
+    accessToken = b'3a7c1bb9276b415d8c1d4524db29107c'
+    appkey = '2df557605dc411ed87adc50dabda4409'
     payload = json.dumps({  # json.dumps() 是把python对象转换成json对象的一个过程，生成的是字符串
         "payload": {
             "audioMeta": {
@@ -126,8 +122,23 @@ def your(filepath, text, ext):
             "metadata": (None, payload, "application/json; charset=utf8"),  # form-data; name="metadata"
         }, boundary="----WebKitFormBoundary7MA4YWxkTrZu0gW"
     )
+    credentialDate = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')  # 获得当前时间戳，样例格式为2021 04 09 T 02 45 11 Z
+    signingContent = data.encoding + credentialDate  # 为签名原始数据,由   请求数据Json字符串   +    时间戳构成
+
+    # 把"签名原始数据"signingContent用accessToken进行加密，加密方式为sha256，等于是创建了特定格式的鉴权信息
+    signature = hmac.new(accessToken, signingContent.encode('utf8'), hashlib.sha256).hexdigest()  # 作为十六进制数据字符串值 加密
+
+    # 计算得到签名之后，需要在请求头中带上签名信息，结构：加密方式+appkey+当前时间戳+签名信息组成鉴权信息
+    authorizationHeader = 'TVS-HMAC-SHA256-BASIC' + ' ' + 'CredentialKey=' + appkey + ', ' + 'Datetime=' + credentialDate + ', ' + 'Signature=' + signature
+
+    # 封装请求头：数据请求格式+鉴权信息
+    headers = {'Content-Type': 'multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+               'DSN': '28:37:13:05:4A:4C',
+               'appkey': appkey,
+               'Authorization': authorizationHeader}
+
     r = requests.post(url, data=data, headers=headers)
-    # print(r.text)
+    print(r.text)
     if not json.loads(r.text)["header"]["code"] == 200:
         result = {"status": True, "msg": json.loads(r.text)["header"]["message"]}
         return json.dumps(result, ensure_ascii=False)
@@ -139,6 +150,60 @@ def your(filepath, text, ext):
               "integrity": json.loads(r.text)["payload"]["integrity"],
               "pronunciation": json.loads(r.text)["payload"]["pronunciation"],
               "rhythm": json.loads(r.text)["payload"]["rhythm"]}
+    return json.dumps(result, ensure_ascii=False)
+
+
+def flower(filepath, ext):
+    print("-------------------------------flower------------------------------------")
+    print("测试文件绝对路径：" + filepath)
+    url = 'https://gwgray.tvs.qq.com/ai/image/flower'
+    # 封装请求头：数据请求格式+鉴权信息
+    headers = {'Content-Type': 'Content-Type: image/jpeg',
+               'Appkey': AppKey}
+
+    data = open(filepath, 'rb')
+    print(type(data))
+    r = requests.post(url, data=data, headers=headers)
+
+    if not json.loads(r.text)["header"]["code"] == 200:
+        result = {"status": False, "msg": json.loads(r.text)["header"]["message"]}
+        return json.dumps(result, ensure_ascii=False)
+    print("识别到的文字：" + json.loads(r.text)["payload"]["items"][0]["id"])  # 是将字符串传化为字典
+
+    if json.loads(r.text)["payload"]["items"][0]["id"] == "":
+        result = {"status": False,
+                  "msg": "未识别到"}
+        return json.dumps(result, ensure_ascii=False)
+    result = {"status": True,
+              "id": json.loads(r.text)["payload"]["items"][0]["id"],
+              "introduce": json.loads(r.text)["payload"]["items"][0]["entity"]["introduce"]}
+    return json.dumps(result, ensure_ascii=False)
+
+
+def star(filepath, ext):
+    print("-------------------------------star------------------------------------")
+    print("测试文件绝对路径：" + filepath)
+    url = 'https://gwgray.tvs.qq.com/ai/image/famous'
+    # 封装请求头：数据请求格式+鉴权信息
+    headers = {'Content-Type': 'Content-Type: image/jpeg',
+               'Appkey': AppKey}
+
+    data = open(filepath, 'rb')
+    print(type(data))
+    r = requests.post(url, data=data, headers=headers)
+
+    if not json.loads(r.text)["header"]["code"] == 200:
+        result = {"status": False, "msg": json.loads(r.text)["header"]["message"]}
+        return json.dumps(result, ensure_ascii=False)
+    print("识别到的文字：" + json.loads(r.text)["payload"]["items"][0]["id"])  # 是将字符串传化为字典
+
+    if json.loads(r.text)["payload"]["items"][0]["id"] == "":
+        result = {"status": False,
+                  "msg": "未识别到"}
+        return json.dumps(result, ensure_ascii=False)
+    result = {"status": True,
+              "id": json.loads(r.text)["payload"]["items"][0]["id"],
+              "introduce": json.loads(r.text)["payload"]["items"][0]["entity"]["introduce"]}
     return json.dumps(result, ensure_ascii=False)
 
 
